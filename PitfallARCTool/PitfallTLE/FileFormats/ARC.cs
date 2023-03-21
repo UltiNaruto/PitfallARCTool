@@ -149,7 +149,7 @@ namespace PitfallARCTool.PitfallTLE.FileFormats
             return new MemoryStream(Files[i].ToArray());
         }
 
-        Int32 GetFileOffset(Int32 index) => index == 0 ? 4 : FileInfos[index].Size + GetFileOffset(index - 1);
+        Int32 GetFileOffset(Int32 index) => index == 0 ? FileInfos[0].Offset : FileInfos[index].Size + GetFileOffset(index - 1);
 
         public void SetFile(String fn, MemoryStream datas)
         {

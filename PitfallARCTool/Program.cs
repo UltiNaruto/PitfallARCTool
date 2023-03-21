@@ -19,9 +19,9 @@ namespace PitfallARCTool
             Console.WriteLine("Pitfall ARC Tool");
             Console.WriteLine("-----------------------");
             Console.WriteLine();
-            Console.WriteLine("Extract : PitfallARCTool -x <input path> [-o <output path>]");
-            Console.WriteLine("Create : PitfallARCTool -c <input path> [-o <output path>]");
-            Console.WriteLine("Update index.ind : PitfallARCTool -u <input path>");
+            Console.WriteLine("Extract : PitfallARCTool -x <input path> -e <be|le> [-o <output path>]");
+            Console.WriteLine("Create : PitfallARCTool -c <input path> -e <be|le> [-o <output path>]");
+            Console.WriteLine("Update index.ind : PitfallARCTool -u <input path> -e <be|le>");
         }
 
         static bool ParseArguments(String[] args, out List<Argument> outArgs)
@@ -130,6 +130,32 @@ namespace PitfallARCTool
                         i++;
                         continue;
                     }
+
+                    if (args[i] == "-e")
+                    {
+                        if (!outArgs.Any(a => a.cmd == "-c") && !outArgs.Any(a => a.cmd == "-x") && !outArgs.Any(a => a.cmd == "-u"))
+                        {
+                            Console.WriteLine("Are you compressing or extracting or updating index.ind?");
+                            return false;
+                        }
+
+                        if (args[i + 1].StartsWith("-"))
+                            return false;
+
+                        if (args[i + 1].ToLower() != "be" && args[i + 1].ToLower() != "le")
+                        {
+                            Console.WriteLine($"Invalid endianness supplied! ({args[i + 1]} in argument {outArgs.Count})");
+                            return false;
+                        }
+
+                        outArgs.Add(new Argument()
+                        {
+                            cmd = args[i],
+                            args = new String[] { args[i + 1].ToUpper() }
+                        });
+                        i++;
+                        continue;
+                    }
                 }
                 else
                 {
@@ -180,8 +206,7 @@ namespace PitfallARCTool
                 else
                     outPath = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileNameWithoutExtension(inPath));
 
-                Console.WriteLine("Which endianness is used in the archive? (BE or LE)");
-                String endianness = Console.ReadLine();
+                String endianness = arguments.Find(a => a.cmd == "-e").args[0];
 
                 ARC arc = default(ARC);
                 IND ind = default(IND);

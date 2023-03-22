@@ -1,4 +1,4 @@
-﻿using PitfallARCTool.PitfallTLE.FileFormats;
+using PitfallARCTool.PitfallTLE.FileFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -174,12 +174,12 @@ namespace PitfallARCTool
             return true;
         }
 
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             if (!ParseArguments(args, out List<Argument> arguments))
             {
                 Usage();
-                return;
+                return 1;
             }
 
             Utils.CRC32.Instance = new Utils.CRC32();
@@ -290,6 +290,8 @@ namespace PitfallARCTool
 
                     Console.WriteLine("Done!");
                 }
+                
+                return 0;
             }
             catch (Exception ex)
             {
@@ -298,6 +300,7 @@ namespace PitfallARCTool
                 Console.WriteLine(ex.StackTrace);
                 Console.WriteLine();
                 Console.WriteLine();
+                return 1;
             }
         }
     }
